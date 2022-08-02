@@ -3,17 +3,24 @@
 (2, 1) (2, 2) (2, 3)
 (3, 1) (3, 2) (3, 3)
 """
+import random
 
 X_SYMBOL = 'X'
 O_SYMBOL = 'O'
+EMPTY_CELL = ' '
 GRID_SIZE = 3
 
 
-def create_grid():  # , allowed_symbols: set
-    initial_state = input('Enter the cells:')
-    initial_state = initial_state.replace('_', ' ')
-    initial_state = list(initial_state)
-    return [initial_state[i: i + GRID_SIZE] for i in range(0, len(initial_state), GRID_SIZE)]
+def create_grid():
+    # так делать не надо, потому что он создает вложенный список,
+    # где элементами являются не несколько разных списков,
+    # а один и тот же, просто ссылки повторяются
+    # типа: [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
+    # но id() каждого из этих трех внутренних списков один и тот же
+    #  ---> return [[EMPTY_CELL] * GRID_SIZE] * GRID_SIZE
+    total = GRID_SIZE * GRID_SIZE
+    initial_state = [EMPTY_CELL] * total
+    return [initial_state[i: i + GRID_SIZE] for i in range(0, total, GRID_SIZE)]
 
 
 def print_grid(grid: list):
@@ -28,59 +35,60 @@ def is_finished(grid: list):
         print(f'{winner} wins')
         return True
 
-    filled_cells = [s for line in grid for s in line if s == O_SYMBOL or s == X_SYMBOL]
-    if len(filled_cells) == len(grid):
+    filled_cells = [s for line in grid for s in line if s != EMPTY_CELL]
+    if len(filled_cells) == GRID_SIZE * GRID_SIZE:
         print('Draw')
         return True
-    else:
-        print('Game not finished')
-        return False
+
+    return False
 
 
 def get_winner(grid: list):
     players = {X_SYMBOL, O_SYMBOL}
     for symbol in players:
-        if any(all(s == symbol for s in line) for line in grid for s in line) \
+        if any(all(s == symbol for s in line) for line in grid) \
+                or any(all(grid[j][i] == symbol for j in range(GRID_SIZE)) for i in range(GRID_SIZE))\
                 or all(grid[i][i] == symbol for i in range(GRID_SIZE)) \
                 or all(grid[i][GRID_SIZE - 1 - i] == symbol for i in range(GRID_SIZE)):
             return symbol
     return None
 
 
-def get_coordinates(grid: list):
-    while True:
-        coord = input('Enter the coordinates:')
-        try:
-            i, j = coord.split()
-            i, j = int(i) - 1, int(j) - 1
-        except ValueError:
-            print('You should enter numbers!')
-            continue
+def make_move(grid: list, is_human: bool):
+    if is_human:
+        while True:
+            coord = input('Enter the coordinates:')
+            try:
+                i, j = coord.split()
+                i, j = int(i) - 1, int(j) - 1
+            except ValueError:
+                print('You should enter numbers!')
+                continue
 
-        if 0 > i or i > GRID_SIZE - 1 or 0 > j or j > GRID_SIZE - 1:
-            print(f'Coordinates should be from 1 to {GRID_SIZE}!')
-            continue
+            if 0 > i or i > GRID_SIZE - 1 or 0 > j or j > GRID_SIZE - 1:
+                print(f'Coordinates should be from 1 to {GRID_SIZE}!')
+                continue
 
-        if grid[i][j] != ' ':
-            print('This cell is occupied! Choose another one!')
-            continue
+            if grid[i][j] != EMPTY_CELL:
+                print('This cell is occupied! Choose another one!')
+                continue
+            break
+    else:
+        print('Making move level "easy"')
+        empty_coordinates = [[i, j] for i in range(GRID_SIZE) for j in range(GRID_SIZE) if grid[i][j] == EMPTY_CELL]
+        i, j = random.choice(empty_coordinates)
 
-        return i, j
-
-
-def make_move(grid: list):
-    i, j = get_coordinates(grid)
-    x_symbols = [s for line in grid for s in line if s == X_SYMBOL]
-    o_symbols = [s for line in grid for s in line if s == O_SYMBOL]
-    grid[i][j] = X_SYMBOL if len(x_symbols) <= len(o_symbols) else O_SYMBOL
+    grid[i][j] = X_SYMBOL if is_human else O_SYMBOL
 
 
 if __name__ == '__main__':
     game_grid = create_grid()
     print_grid(game_grid)
+    is_human = True
 
     while True:
-        make_move(game_grid)
+        make_move(game_grid, is_human)
         print_grid(game_grid)
         if is_finished(game_grid):
             break
+        is_human = not is_human
