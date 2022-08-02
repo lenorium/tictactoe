@@ -6,7 +6,7 @@
 
 X_SYMBOL = 'X'
 O_SYMBOL = 'O'
-GRID_SIZE = 4
+GRID_SIZE = 3
 
 
 def create_grid():  # , allowed_symbols: set
@@ -27,6 +27,7 @@ def is_finished(grid: list):
     if winner is not None:
         print(f'{winner} wins')
         return True
+
     filled_cells = [s for line in grid for s in line if s == O_SYMBOL or s == X_SYMBOL]
     if len(filled_cells) == len(grid):
         print('Draw')
@@ -55,12 +56,15 @@ def get_coordinates(grid: list):
         except ValueError:
             print('You should enter numbers!')
             continue
+
         if 0 > i or i > GRID_SIZE - 1 or 0 > j or j > GRID_SIZE - 1:
             print(f'Coordinates should be from 1 to {GRID_SIZE}!')
             continue
+
         if grid[i][j] != ' ':
             print('This cell is occupied! Choose another one!')
             continue
+
         return i, j
 
 
@@ -74,6 +78,7 @@ def make_move(grid: list):
 if __name__ == '__main__':
     game_grid = create_grid()
     print_grid(game_grid)
+
     while True:
         make_move(game_grid)
         print_grid(game_grid)
