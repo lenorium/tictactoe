@@ -9,6 +9,7 @@ X_SYMBOL = 'X'
 O_SYMBOL = 'O'
 EMPTY_CELL = ' '
 GRID_SIZE = 3
+TOTAL = GRID_SIZE ** 2
 
 
 def create_grid():
@@ -18,9 +19,8 @@ def create_grid():
     # типа: [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
     # но id() каждого из этих трех внутренних списков один и тот же
     #  ---> return [[EMPTY_CELL] * GRID_SIZE] * GRID_SIZE
-    total = GRID_SIZE * GRID_SIZE
-    initial_state = [EMPTY_CELL] * total
-    return [initial_state[i: i + GRID_SIZE] for i in range(0, total, GRID_SIZE)]
+    initial_state = [EMPTY_CELL] * TOTAL
+    return [initial_state[i: i + GRID_SIZE] for i in range(0, TOTAL, GRID_SIZE)]
 
 
 def print_grid(grid: list):
@@ -36,7 +36,7 @@ def is_finished(grid: list):
         return True
 
     filled_cells = [s for line in grid for s in line if s != EMPTY_CELL]
-    if len(filled_cells) == GRID_SIZE * GRID_SIZE:
+    if len(filled_cells) == TOTAL:
         print('Draw')
         return True
 
@@ -59,8 +59,7 @@ def make_move(grid: list, is_human: bool):
         while True:
             coord = input('Enter the coordinates:')
             try:
-                i, j = coord.split()
-                i, j = int(i) - 1, int(j) - 1
+                i, j = [int(c) - 1 for c in coord.split()]
             except ValueError:
                 print('You should enter numbers!')
                 continue
