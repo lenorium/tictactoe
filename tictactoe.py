@@ -8,6 +8,7 @@ GRID_SIZE = 3
 
 if __name__ == '__main__':
     error = 'Bad parameters!'
+
     game_levels = {'user', 'easy'}
     while True:
         try:
@@ -34,4 +35,3 @@ if __name__ == '__main__':
 
         else:
             print(error)
-
