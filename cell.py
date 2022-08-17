@@ -1,14 +1,22 @@
 class Cell:
     def __init__(self):
-        self.symbol = ' '
-        self.is_used = False
+        self.__symbol = ' '
+        self.__is_used = False
 
     def __str__(self):
-        return f'{self.symbol}'
+        return f'{self.__symbol}'
 
-    def fill(self, symbol):
-        self.symbol = symbol
-        self.is_used = True
+    def set_symbol(self, symbol):
+        self.__symbol = symbol
+        self.__is_used = True
 
-    def is_filled(self):
-        return self.is_used
+    def get_symbol(self):
+        return self.__symbol
+
+    def is_used(self):
+        return self.__is_used
+
+    def equals(self, symbol):
+        return self.__symbol == symbol
+
+    symbol = property(get_symbol, set_symbol)
