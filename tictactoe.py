@@ -1,6 +1,7 @@
 from grid import Grid
 from player import Player
 from game import Game
+from levels import Levels
 
 X_SYMBOL = 'X'
 O_SYMBOL = 'O'
@@ -9,10 +10,9 @@ GRID_SIZE = 3
 if __name__ == '__main__':
     error = 'Bad parameters!'
 
-    game_levels = {'user', 'easy'}
     while True:
         try:
-            command, *user_levels = input('Input command:').lower().strip().split()
+            command, *levels = input('Input command:').lower().strip().split()
         except ValueError:
             print(error)
             continue
@@ -21,14 +21,14 @@ if __name__ == '__main__':
             break
 
         if command == 'start':
-            if len(user_levels) != 2 or any(level not in game_levels for level in user_levels):
+            if len(levels) != 2 or any(not Levels.is_level(level) for level in levels):
                 print(error)
                 continue
 
             grid = Grid(GRID_SIZE)
 
-            player1 = Player(user_levels[0], X_SYMBOL)
-            player2 = Player(user_levels[1], O_SYMBOL)
+            player1 = Player(levels[0], X_SYMBOL)
+            player2 = Player(levels[1], O_SYMBOL)
 
             game = Game(grid, player1, player2)
             game.run()
