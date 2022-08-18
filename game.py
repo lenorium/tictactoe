@@ -13,8 +13,7 @@ class Game:
             print(f'{winner.symbol} wins')
             return True
 
-        empty_cells = self.grid.get_empty_cells_coordinates()
-        if len(empty_cells) == 0:
+        if self.grid.is_full():
             print('Draw')
             return True
 
